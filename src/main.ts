@@ -8,6 +8,12 @@ const app = express();
 app.use(urlencoded({ extended: false }));
 app.use(json());
 
+declare global {
+  interface CustomError extends Error {
+    status?: number;
+  }
+}
+
 const start = async () => {
   if (!process.env.MONGO_URI) throw new Error(" Mongo URI is required");
 
