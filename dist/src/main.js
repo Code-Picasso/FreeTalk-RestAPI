@@ -43,6 +43,12 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const app = (0, express_1.default)();
 app.use((0, body_parser_1.urlencoded)({ extended: false }));
 app.use((0, body_parser_1.json)());
+app.use((error, req, res, next) => {
+    if (error.status) {
+        return res.status(error.status).json({ message: error.message });
+    }
+    res.status(500).json({ message: "something went wrong" });
+});
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
     if (!process.env.MONGO_URI)
         throw new Error(" Mongo URI is required");
