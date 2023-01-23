@@ -12,27 +12,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePostRouter = void 0;
+exports.deletePostRouter = void 0;
 const express_1 = require("express");
 const post_1 = __importDefault(require("src/models/post"));
 const router = (0, express_1.Router)();
-exports.updatePostRouter = router;
-router.post("./api/post/update/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.deletePostRouter = router;
+router.delete("./api/post/delete/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const { content, title } = req.body;
     if (!id) {
-        const error = new Error("post id required");
+        const error = new Error("Post id is required");
         error.status = 400;
         next(error);
     }
-    let updatedPost;
     try {
-        updatedPost = yield post_1.default.findOneAndUpdate({ _id: id }, { $set: { content, title } }, { new: true });
+        yield post_1.default.findOneAndRemove({ _id: id });
     }
     catch (err) {
-        const error = new Error("Post cannot be updated");
-        error.status = 400;
-        next(error);
+        next(new Error("post cannot be updated"));
     }
-    res.status(201).send(updatedPost);
+    res.status(200).json({ success: true });
 }));

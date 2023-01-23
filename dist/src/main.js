@@ -40,9 +40,23 @@ dotenv.config();
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = require("body-parser");
 const mongoose_1 = __importDefault(require("mongoose"));
+const cors_1 = __importDefault(require("cors"));
+const index_1 = require("./routers/index");
 const app = (0, express_1.default)();
+app.use((0, cors_1.default)({ origin: "*", optionsSuccessStatus: 200 }));
 app.use((0, body_parser_1.urlencoded)({ extended: false }));
 app.use((0, body_parser_1.json)());
+app.use(index_1.deleteCommentRouter);
+app.use(index_1.deletePostRouter);
+app.use(index_1.newCommentRouter);
+app.use(index_1.newPostRouter);
+app.use(index_1.showPostRouter);
+app.use(index_1.updatePostRouter);
+app.all("*", (req, res, next) => {
+    const error = new Error("Not found ");
+    error.status = 404;
+    next(error);
+});
 app.use((error, req, res, next) => {
     if (error.status) {
         return res.status(error.status).json({ message: error.message });

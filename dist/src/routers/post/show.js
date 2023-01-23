@@ -12,27 +12,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePostRouter = void 0;
+exports.showPostRouter = void 0;
 const express_1 = require("express");
 const post_1 = __importDefault(require("src/models/post"));
 const router = (0, express_1.Router)();
-exports.updatePostRouter = router;
-router.post("./api/post/update/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.showPostRouter = router;
+router.post("/api/post/show/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const { content, title } = req.body;
     if (!id) {
-        const error = new Error("post id required");
-        error.status = 400;
-        next(error);
+        const allPosts = yield post_1.default.find();
+        return res.status(200).send(allPosts);
     }
-    let updatedPost;
-    try {
-        updatedPost = yield post_1.default.findOneAndUpdate({ _id: id }, { $set: { content, title } }, { new: true });
-    }
-    catch (err) {
-        const error = new Error("Post cannot be updated");
-        error.status = 400;
-        next(error);
-    }
-    res.status(201).send(updatedPost);
+    const post = yield post_1.default.findOne({ _id: id }).populate("comments");
+    res.status(200).send(post);
 }));
